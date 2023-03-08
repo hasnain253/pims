@@ -1,0 +1,17 @@
+<p style="color: green"><%= notice %></p>
+<%= link_to "Hospitals", hospitals_path %>  
+<%= link_to "Physicians", physicians_path %>  
+<%= link_to "Patients", patients_path %>
+
+<h1>Appointments</h1>
+
+<div id="appointments">
+  <% @appointments.each do |appointment| %>
+    <%= render partial: 'appointment', locals: { appointment: appointment } %>
+    <p>
+      <%= link_to "Show this appointment", appointment %>
+    </p>
+  <% end %>
+</div>
+
+<%= link_to "New appointment", new_appointment_path %>

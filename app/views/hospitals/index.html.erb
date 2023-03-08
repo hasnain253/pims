@@ -1,0 +1,76 @@
+<p style="color: green"><%= notice %></p>
+<div>
+  <%= link_to "Physicians", physicians_path %>
+  <%= link_to "Patients", patients_path %>
+  <%= link_to "Appointments", appointments_path %>
+</div>
+<div>
+  <%= link_to "Back", appointments_path %>
+</div>
+<%= link_to "New hospital", new_hospital_path %>
+
+<h1>Hospitals</h1>
+
+<div id="hospitals">
+  <% @hospitals.each do |hospital| %>
+    <%= render hospital %>
+    <div>
+      <strong>Patient List:</strong>
+      <select id="patient-list-<%= hospital.id %>">
+        <% hospital.patients.each do |patient| %>
+          <option value="<%= patient.id %>"><%= patient.name %></option>
+        <% end %>
+      </select>
+    </div>
+    <%= form_with(model: Patient.new, url: hospital_patients_path(hospital), remote: true) do |form| %>
+      <div>
+      <%= form.label :patient_name %>
+      <%= form.text_field :name, id: 'patient_name' %>
+        <%= form.submit "Add Patient" %>
+      </div>
+    <% end %>
+    <p>
+      <%= link_to "Show this hospital", hospital %>
+    </p>
+  <% end %>
+</div>
+
+<script>
+$(document).ready(function () {
+  $('form').submit(function (event) {
+    event.preventDefault();
+
+    var form = $(this);
+    var url = form.attr('action');
+    var data = form.serialize();
+
+    $.ajax({
+      type: 'POST',
+      url: url,
+      data: {
+    patient: {
+      name: $('#patient_name').val(),
+      hospital_id: $('#patient_hospital_id').val()
+    }
+  },
+      success: function (response) {
+        var list = $('#patient-list-' + response.hospital_id);
+        list.append($('<option>', {
+          value: response.id,
+          text: response.name
+        }));
+        form[0].reset();
+        $('#success-message').text('Patient added successfully').show();
+      }
+    });
+  });
+});
+
+</script>
+
+
+
+
+
+
+

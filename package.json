@@ -1,0 +1,10 @@
+{
+  "name": "PIMS",
+  "version": "yarn add jquery",
+  "main": "index.js",
+  "author": "Your Name <you@example.com>",
+  "license": "MIT",
+  "dependencies": {
+    "jquery": "^3.6.3"
+  }
+}

@@ -1,0 +1,68 @@
+<%= form_with(model: appointment) do |form| %>
+    <% if appointment.errors.any? %>
+    <div style="color: red">
+      <h2><%= pluralize(appointment.errors.count, "error") %> prohibited this appointment from being saved:</h2>
+
+      <ul>
+        <% appointment.errors.each do |error| %>
+          <li><%= error.full_message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+  
+  <div>
+  <%= form.label :hospital_id, style: "display: block" %>
+  <%= form.collection_select :hospital_id, Hospital.all, :id, :name, {}, { id: 'hospital-select', class: 'form-control' } %>
+
+</div>
+<div>
+  <%= form.label :patient_id, style: "display: block" %>
+  <%= form.collection_select :patient_id,[] , :id, :name, {}, { id: 'patient-select', class: 'form-control' } %>
+  </div>
+<div>
+  <%= form.label :physician_id, style: "display: block" %>
+  <%= form.collection_select :physician_id, [], :id, :name, {}, { id: 'physician-select', class: 'form-control' } %>
+</div>
+
+  <div>
+    <%= form.label :appointment_date, style: "display: block" %>
+    <%= form.datetime_field :appointment_date %>
+  </div>
+
+  <div>
+    <%= form.submit %>
+  </div>
+<% end %>
+
+<script>
+$(document).ready(function() {
+  const hospitalSelect = $('#hospital-select');
+  const physicianSelect = $('#physician-select');
+  const patientSelect = $('#patient-select');
+
+  hospitalSelect.on('change', () => {
+    const hospitalId = hospitalSelect.val();
+
+    $.ajax({
+      url: `/appointments/physicians_and_patients?hospital_id=${hospitalId}`,
+      type: 'GET',
+      dataType: 'json',
+      success: function(data) {
+        physicianSelect.html('');
+        patientSelect.html('');
+
+        $.each(data.physicians, function(index, physician) {
+          const option = $('<option>').attr('value', physician.id).text(physician.name);
+          physicianSelect.append(option);
+        });
+
+        $.each(data.patients, function(index, patient) {
+          const option = $('<option>').attr('value', patient.id).text(patient.name);
+          patientSelect.append(option);
+        });
+      }
+    });
+  });
+});
+</script>
